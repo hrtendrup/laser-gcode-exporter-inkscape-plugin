@@ -11,7 +11,7 @@
     </effect>
 
     <dependency type="executable" location="extensions">turnkeylaser.py</dependency>
-    <dependency type="executable" location="extensions">inkex.py</dependency>
+    <!-- <dependency type="executable" location="extensions">inkex.py</dependency> -->
 
     <script>
         <command reldir="extensions" interpreter="python">turnkeylaser.py</command>
