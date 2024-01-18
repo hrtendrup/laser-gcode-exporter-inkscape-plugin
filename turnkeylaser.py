@@ -4,7 +4,8 @@
 TurnkeyLaserExporter
 
 -----------------------------------
-Maintained by Turnkey Tyranny (https://github.com/TurnkeyTyranny/laser-gcode-exporter-inkscape-plugin)
+Maintained by tendrup (https://github.com/hrtendrup/laser-gcode-exporter-inkscape-plugin/)
+Many thankks to TurnkeyTranny for the fork parent
 Designed to run on Ramps 1.4 + Marlin firmware on a K40 CO2 Laser Cutter.
 Based on think|haus gcode inkscape extension
 Based on a script by Nick Drobchenko from the CNC club
