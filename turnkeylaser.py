@@ -248,7 +248,7 @@ def csplength(csp):
     total = 0
     lengths = []
     for sp in csp:
-        for i in xrange(1,len(sp)):
+        for i in range(1,len(sp)):
             l = cspseglength(sp[i-1],sp[i])
             lengths.append(l)
             total += l
@@ -663,9 +663,20 @@ class Gcode_tools(inkex.Effect):
         gcode += '\n\n;Beginning of Raster Image '+str(curve['id'])+' pixel size: '+str(curve['width'])+'x'+str(curve['height'])+'\n'
         gcode += 'M649 S'+str(laserPower)+' B2 D0 R0.09406\n'
 
+        ###
+        ### troubleshoot herre
+        ### raise AssertionError(cutFeed, self.options.Mfeed)
+        
+        ### cutFeed is a string with the Gcode "F" already prepended
+        ### self.options.Mfeed is an int already
+        ### the following if condition appends gcode and adds in the "F" to the int
+        ### I'm lead to believe the original author knew about this str/int comparison
+        ### python2 might not have cared. python3 does.
+        ### commenting original if statement and modifying to recast the str to int
         #Do not remove these two lines, they're important. Will not raster correctly if feedrate is not set prior.
         #Move fast to point, cut at correct speed.
-        if(cutFeed < self.options.Mfeed):
+        ### if(cutFeed < self.options.Mfeed):
+        if(int(cutFeed[1:]) < self.options.Mfeed):
             gcode += 'G0 X'+str(curve['x'])+' Y'+str(curve['y'])+' F'+str(self.options.Mfeed)+'\n'
         gcode += 'G0 X'+str(curve['x'])+' Y'+str(curve['y'])+' '+cutFeed+'\n'
 
@@ -804,7 +815,13 @@ class Gcode_tools(inkex.Effect):
                 else:
                     gcode +=  ("G7 ")
 
-                b64 = base64.b64encode("".join(chr(y) for y in chunk))
+                ### troubleshoot here
+                ###raise AssertionError("".join(chr(y) for y in chunk))
+                ### need to give b64encode a bytes like object, not a str
+                ### then convert back to str
+                b64 = base64.b64encode("".join(chr(y) for y in chunk).encode()).decode()
+
+                ###raise AssertionError(b64)
 
                 #If we're using pronterface, we need to change raster data / and + in the base64 alphabet to letter 9. This loses a little intensity in pure blacks but keeps pronterface happy.
                 if( self.options.pronterface ):
@@ -951,7 +968,10 @@ class Gcode_tools(inkex.Effect):
         """Define the temporary folder path depending on the operating system"""
 
         if os.name == 'nt':
-            return 'C:\\WINDOWS\\Temp\\'
+            ### commenting out next line, changing to os.environ['TEMP']
+            ### return 'C:\\WINDOWS\\Temp\\'
+            
+            return os.environ['TEMP'] + '\\'
         else:
             return '/tmp/'
 
@@ -1019,18 +1039,61 @@ class Gcode_tools(inkex.Effect):
 
             else :
                 #Raster the results.
-                if(node.get("x") > 0):
+                ### 
+                ### raise AssertionError([node.get("x"), type(node.get('x'))])
+                ### raise AssertionError(node.get('x', 'no X'),node.get('y','no y'), type(node))
+                ### there seems to be a bug/feature in Inkscape1.3.1 where making
+                ### a bitmap copy of a path and NOT moving it, means the image copy
+                ### doesn't have x,y associated with it
+                if(float(node.get("x")) > 0):
                     tmp = self.getTmpPath() #OS tmp directory
                     bgcol = "#ffffff" #White
                     curfile = curfile = self.args[-1] #The current inkscape project we're exporting from.
-                    command="inkscape --export-dpi 270 -i %s --export-id-only -e \"%stmpinkscapeexport.png\" -b \"%s\" %s" % (node.get("id"),tmp,bgcol,curfile)
+                    nodeid = node.get("id")
+                    ### command line deprecated, build on next line, inkscape expert from chat.inkscape.com proposes using inkex.command.inkscape()
+                    ### command="inkscape --export-dpi 270 -i %s --export-id-only -e \"%stmpinkscapeexport.png\" -b \"%s\" %s" % (node.get("id"),tmp,bgcol,curfile)
+                    ###
+                    ### raise AssertionError([curfile, command,tmp])
+                    
+                    my_actions = '--actions="'
+                    my_actions += 'export-dpi:270'
+                    my_actions += f';export-id:{nodeid}'
+                    my_actions += ';export-id-only'
+                    my_actions += ';export-type=png'
+                    my_actions += f';export-filename:{tmp}\\tmpinkscapeexport.png'
+                    my_actions += f';export-background:{bgcol}'
+                    my_actions += ';export-do"'
+                    command = f'inkscape {my_actions} {curfile}'
+                    
+                    ###testactions = r'--actions="export-dpi:270;export-id:image2;export-id-only;export-filename:C:\Users\hrten\Desktop\\tmpinkscapeexport.png;export-background:#ffffff;export-do"'
+                    ###testactions = r'--actions="export-filename:C:\Users\hrten\Desktop\\tmpinkscapeexport.png;export-background:#ffffff;export-do"'
+                    ###testactions = r'--actions="export-filename:\Users\hrten\Desktop\\tmpinkscapeexport.png;export-background:#ffffff;export-do"'
+                    ###curfile = r'C:\Users\hrten\Desktop\sometest.svg'
+                    ###raise AssertionError(my_actions)
+                    ###raise AssertionError(curfile)
+                    ###raise AssertionError(inkex.command.inkscape('', '--version'))
+                    ###raise AssertionError(inkex.command.inkscape(curfile, '-l', r'--export-filename=\users\hrten\Desktop\test.svg'))
+                    ###raise AssertionError(inkex.command.inkscape(curfile, '-l', r'--export-filename=\users\hrten\Desktop\test.svg'))
+                    ###raise AssertionError(inkex.command.inkscape(curfile, testactions))
+                    ###inkex.command.inkscape(curfile, testactions)
+                    ###raise AssertionError(inkex.command.inkscape(curfile, my_actions))
+                    ###raise AssertionError(inkex.command.inkscape('garbage', my_actions))
+                    ##
+                    ##
+                    ###print(inkex.command.inkscape(curfile, testactions))
+                    ###raise Exception([inkex.command.inkscape(curfile, testactions), curfile, testactions])
+                    ###raise Exception(inkex.command.inkscape('', '--actions="export-filename:c:\\users\hrten\Desktop\anewtestfile.svg;export-do"', '--shell'))
+                    ###raise Exception(inkex.command.inkscape("C:\Users\hrten\AppData\Local\Temp\ink_ext_XXXXXX.svgTL57G2", r'--actions="export-dpi:270;export-id:image2;export-id-only;export-filename:C:\Users\hrten\Desktop\\tmpinkscapeexport.png;export-background:#ffffff;export-do"'))
+                    ###exit()
 
+                   
                     p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     return_code = p.wait()
                     f = p.stdout
                     err = p.stderr
-
-
+                   
+                    ###raise AssertionError([return_code,f.read(),err.read()])
+                    
                     #Fetch the image Data
                     filename = "%stmpinkscapeexport.png" % (tmp)
                     if (self.options.origin == 'topleft'):
@@ -1044,7 +1107,7 @@ class Gcode_tools(inkex.Effect):
 
                     #Compile the pixels.
                     pixels = list(img.getdata())
-                    pixels = [pixels[i * (imageDataWidth):(i + 1) * (imageDataWidth)] for i in xrange(imageDataheight)]
+                    pixels = [pixels[i * (imageDataWidth):(i + 1) * (imageDataWidth)] for i in range(imageDataheight)]
 
                     path['type'] = "raster"
                     path['width'] = imageDataWidth
@@ -1063,16 +1126,37 @@ class Gcode_tools(inkex.Effect):
                     #text = p3.communicate()[0]
                     #y_position = float(text)*-1+self.pageHeight
 
+                    
+                    ### troubleshooting
                     if not hasattr(parent, 'glob_nodePositions'):
+                        ### troubleshooting
+                        
                         #Get the XY position of all elements in the inkscape job.
                         command="inkscape -S %s" % (curfile)
                         p5 = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        dataString = str(p5.communicate()[0]).replace("\r", "").split('\n')
+                        ### believe that str(bytes) doesn't work in python3 have to use.decode()
+                        #dataString = str(p5.communicate()[0]).replace("\r", "").split('\n')
+                        dataString = p5.communicate()[0].decode().replace("\r", "").strip().split('\n')
+                        ###raise AssertionError(dataString)
+                        ###
+                        ###
                         #Remove the final array element since the last item has a \r\n which creates a blank array element otherwise.
-                        del dataString[-1]
+                        #del dataString[-1]  ### removed whitespace with .strip() above, so I don't
+                                             ### believe this is needed
+                        ### ran into issue where the 'inkscape -S [file]' commands
+                        ### returned a list with a blank line. this resulted in
+                        ### in an empty element in the middle of the list
+                        ### the following then fails due to statically calling an index after a split
+                        ### elementList = dict((item.split(",",1)[0],item.split(",",1)[1]) for item in dataString)
+                        ### rewriting dataString list, removing blank entries
+                        dataString = list(filter(None, dataString))
                         elementList = dict((item.split(",",1)[0],item.split(",",1)[1]) for item in dataString)
+                        ### 
                         parent.glob_nodePositions = elementList
+                        
 
+                    ### troubleshooting here
+                   
                     #Lookup the xy coords for this node.
                     elementData = parent.glob_nodePositions[node.get("id")].split(',')
                     x_position = float(elementData[0])
@@ -1134,7 +1218,7 @@ class Gcode_tools(inkex.Effect):
                 #Resize the image here for highter DPI - say 300dpi
                 #Compile the pixels.
                 pixels = list(im_resized.getdata())
-                pixels = [pixels[i * (inkscapeWidth*3):(i + 1) * (inkscapeWidth * 3)] for i in xrange(inkscapeHeight*3)]
+                pixels = [pixels[i * (inkscapeWidth*3):(i + 1) * (inkscapeWidth * 3)] for i in range(inkscapeHeight*3)]
 
                 path['type'] = "raster"
                 path['width'] = inkscapeWidth
@@ -1221,6 +1305,8 @@ class Gcode_tools(inkex.Effect):
                         inkex.errormsg("Built gcode for "+str(node.get("id"))+" - will be cut as %s." % (newPath['type']) )
                     except:
                         messageOnce = True
+                        ### troublshooting here
+
                         for objectData in compile_paths(self, node, trans):
                             #if (messageOnce):
                             inkex.errormsg("Built gcode for group "+str(node.get("id"))+", item %s - will be cut as %s." % (objectData['id'], objectData['type']) )
