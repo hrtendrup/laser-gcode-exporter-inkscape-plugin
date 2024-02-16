@@ -4,8 +4,7 @@
 TurnkeyLaserExporter
 
 -----------------------------------
-Maintained by tendrup (https://github.com/hrtendrup/laser-gcode-exporter-inkscape-plugin/)
-Many thankks to TurnkeyTranny for the fork parent
+Maintained by Turnkey Tyranny (https://github.com/TurnkeyTyranny/laser-gcode-exporter-inkscape-plugin)
 Designed to run on Ramps 1.4 + Marlin firmware on a K40 CO2 Laser Cutter.
 Based on think|haus gcode inkscape extension
 Based on a script by Nick Drobchenko from the CNC club
@@ -150,7 +149,15 @@ SVG_IMAGE_TAG = inkex.addNS('image', 'svg')
 SVG_TEXT_TAG = inkex.addNS('text', 'svg')
 SVG_LABEL_TAG = inkex.addNS("label", "inkscape")
 
+### default DPI in 1.3.2 = 96dpi (since v0.92 really)
+### updating UNIT_SCALES dict - I think only 'in' and 'mm' are referenced in this scripts ('px' is actually indirectly refenced too)
+### removing other keys
 UNIT_SCALES = {'in':90.0, 'pt':1.25, 'px':1.0, 'mm':3.5433070866, 'cm':35.433070866, 'm':3543.3070866,'km':3543307.0866, 'pc':15.0, 'yd':3240.0 , 'ft':1080.0}
+
+### This changes the output - which should have been kind of obvious
+### when running the script in inkscape 0.91/python2 I get output that works with the laser
+### this is what I'm going for - WORKING output - so I'm reverting to the original unit scale
+#UNIT_SCALES = {'in':96.0, 'px':1.0, 'mm':3.7795275590 }
 
 options = {}
 
@@ -497,7 +504,6 @@ class Gcode_tools(inkex.Effect):
         self.OptionParser.add_option("",   "--origin",                    action="store", type="string",         dest="origin", default="topleft",    help="Origin of the Y Axis")
         self.OptionParser.add_option("",   "--optimiseraster",                 action="store", type="inkbool",    dest="optimiseraster", default=True, help="Optimise raster horizontal scanning speed")
 
-
     def parse_curve(self, path):
 #        if self.options.Xscale!=self.options.Yscale:
 #            xs,ys = self.options.Xscale,self.options.Yscale
@@ -610,7 +616,10 @@ class Gcode_tools(inkex.Effect):
     # Turns a list of arguments into gcode-style parameters (eg (1, 2, 3) -> "X1 Y2 Z3"),
     # taking scaling, offsets and the "parametric curve" setting into account
     def make_args(self, c):
+        ### investigation here
         c = [c[i] if i<len(c) else None for i in range(6)]
+        ### raise AssertionError(c) # example c is [10.0, 51.332856, None, None, None, None]
+        ### c is values from inkscape in some units (mm in this example) 
         if c[5] == 0:
             c[5] = None
         # next few lines generate the stuff at the front of the file - scaling, offsets, etc (adina)
@@ -618,9 +627,19 @@ class Gcode_tools(inkex.Effect):
         s = ["X", "Y", "Z", "I", "J", "K"]
         s1 = ["","","","","",""]
 
-        m = [self.options.Xscale, -self.options.Yscale, 1,
-             self.options.Xscale, -self.options.Yscale, 1]
+        ### m = [self.options.Xscale, -self.options.Yscale, 1,
+        ###      self.options.Xscale, -self.options.Yscale, 1]
+        m = [self.options.Xscale, self.options.Yscale, 1,
+             self.options.Xscale, self.options.Yscale, 1]
+        ### raise AssertionError(m)
+        ### why did the previous m make Yscale negative?
+        ### trying without the negs
+        ### 
+        ### that seemed to work (!!!?!?!??!!!?!!?)
+        ### m is some kind of scaling list?
+        
         a = [self.options.Xoffset, self.options.Yoffset, 0, 0, 0, 0]
+        ### a is offsets? x and y are configurable, but the rest are static...?
 
        # else:
         #    s = ["X", "Y", "Z", "I", "J", "K"]
@@ -628,7 +647,7 @@ class Gcode_tools(inkex.Effect):
          #   m = [1, -1, 1, 1, -1, 1]
         #    a = [0, 0, 0, 0, 0, 0]
 
-        #There's no aphrodisiac like loneliness
+        #There's no aphrodisiac like loneliness <- ### I bet the original author rubbed one out just here - not judging, it's cool
         #Add the page height if the origin is the bottom left.
         if (self.options.origin != 'topleft'):
             a[1] += self.pageHeight
@@ -636,8 +655,11 @@ class Gcode_tools(inkex.Effect):
         args = []
         for i in range(6):
             if c[i]!=None:
-                value = self.unitScale*(c[i]*m[i]+a[i])
-                args.append(s[i] + ("%.3f" % value) + s1[i])
+                value = self.unitScale*(c[i]*m[i]+a[i])             ### inkscape value * scaling value + offset value 
+                                                                    ### this is actually pretty straightforward
+                                                                    
+                args.append(s[i] + ("%.3f" % value) + s1[i])        ### appends to args
+                                                                    ### each inkscape value as adjusted by scaling and offset
         return " ".join(args)
 
 
@@ -656,9 +678,14 @@ class Gcode_tools(inkex.Effect):
 
         #This extension assumes that your copy of Inkscape is running at 90dpi (it is by default)
         #R = mm per pixel
+        ### pixel = dot
         #R = 1 / dots per mm
+        ### R is reciprical of dots per mm
         #90dpi = 1 / (90 / 25.4)
+        ### 90dpi =  3.5433dpmm (d/mm)
+        ### R = 1/3.5433 = .2822 (mm/d)
         #Rasters are exported internally at 270dpi.
+        ### 270dpi = 10.6299dpmm
         #So R = 1 / (270 / 25.4)
         #     = 0.09406
         gcode += '\n\n;Beginning of Raster Image '+str(curve['id'])+' pixel size: '+str(curve['width'])+'x'+str(curve['height'])+'\n'
@@ -671,7 +698,7 @@ class Gcode_tools(inkex.Effect):
         ### cutFeed is a string with the Gcode "F" already prepended
         ### self.options.Mfeed is an int already
         ### the following if condition appends gcode and adds in the "F" to the int
-        ### I'm lead to believe the original author knew about this str/int comparison
+        ### I'm led to believe the original author knew about this str/int comparison
         ### python2 might not have cared. python3 does.
         ### commenting original if statement and modifying to recast the str to int
         #Do not remove these two lines, they're important. Will not raster correctly if feedrate is not set prior.
@@ -989,6 +1016,7 @@ class Gcode_tools(inkex.Effect):
         # Set group
         if self.options.drawCurves and len(selected)>0:
             self.biarcGroup = inkex.etree.SubElement( selected[0].getparent(), SVG_GROUP_TAG )
+            ### raise AssertionError(type(self.biarcGroup))
             options.Group = self.biarcGroup
 
         # Recursively compiles a list of paths that are decendant from the given node
@@ -1244,6 +1272,7 @@ class Gcode_tools(inkex.Effect):
         # we need to use, so we can know ahead of time whether to put tool change
         # operations between them.
         layers = []
+        ### raise AssertionError(get_layers(self.document))
         for layer in reversed(get_layers(self.document)):
             for node in layer.iterchildren():
                 if (node in selected):
@@ -1291,9 +1320,11 @@ class Gcode_tools(inkex.Effect):
             # Apply the layer transform to all objects within the layer
             trans = layer.get('transform', None)
             trans = simpletransform.parseTransform(trans)
+            ## raise AssertionError(trans)
 
             for node in layer.iterchildren():
                 if (node in selected):
+                    ### raise AssertionError(node,node.__class__)
                     #Vector path data, cut from x to y in a line or curve
 
                     logger.write("node %s" % str(node.tag))
@@ -1469,9 +1500,11 @@ class Gcode_tools(inkex.Effect):
 
     def effect(self):
         global options
+        ### raise AssertionError(self.options)
         options = self.options
         selected = self.selected.values()
-
+        ### raise AssertionError(etree.tostring(list(selected)[0]))
+        
         unitmatch = re.compile('(%s)$' % '|'.join(UNIT_SCALES.keys()))
         param = re.compile(r'(([-+]?[0-9]+(\.[0-9]*)?|[-+]?\.[0-9]+)([eE][-+]?[0-9]+)?)')
 
@@ -1479,7 +1512,7 @@ class Gcode_tools(inkex.Effect):
         heightString = root.get("height", None)
         p = param.search(heightString)
         u = unitmatch.search(heightString)
-
+        ### raise AssertionError(list(root.items()))
         if u:
             self.pageUnit = u.group(0)
         else:
@@ -1487,9 +1520,11 @@ class Gcode_tools(inkex.Effect):
 
         # convert page height to 'px' units
         self.pageHeight = float(p.group(0))*UNIT_SCALES[self.pageUnit]
+        ###raise AssertionError(self.pageHeight)
 
         self.flipArcs = (self.options.Xscale*self.options.Yscale < 0)
         self.currentTool = 0
+        ### raise AssertionError(self.flipArcs)
 
         self.filename = options.file.strip()
         if (self.filename == "-1.0" or self.filename == ""):
@@ -1515,7 +1550,7 @@ class Gcode_tools(inkex.Effect):
             return
 
         gcode = self.header;
-
+        ### raise AssertionError(self.header) ##
         # All internal svg coords are in 'px' regardless of document unit
         if (self.options.unit == "mm"):
             self.unitScale = 1/UNIT_SCALES['mm']
@@ -1576,5 +1611,9 @@ class Gcode_tools(inkex.Effect):
             inkex.errormsg(("Warning: skipped %d object(s) because they were not paths (Vectors) or images (Raster). Please convert them to paths using the menu 'Path->Object To Path'" % self.skipped))
 
 e = Gcode_tools()
+
+### troublshoot here
+### what owns the affect function?
+### raise AssertionError(e.affect)
 e.affect()
 inkex.errormsg("Finished processing.")
