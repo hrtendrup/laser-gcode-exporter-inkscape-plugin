@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="300mm"
+   height="200mm"
+   viewBox="0 0 300 200"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="new_surface-muckedwith.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     showguides="true"
+     inkscape:zoom="1.241849"
+     inkscape:cx="-388.53354"
+     inkscape:cy="334.58173"
+     inkscape:window-width="1920"
+     inkscape:window-height="974"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="39.94799,169.95911"
+       orientation="0,-1"
+       id="guide5"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="39.94799,169.95911"
+       orientation="1,0"
+       id="guide6"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="259.92825,0.063064575"
+       orientation="1,0"
+       id="guide7"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="259.92825,30.063064"
+       orientation="0,-1"
+       id="guide8"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="10 [feed=200]"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       id="text3436"
+       y="46.802361"
+       x="-190.58286"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.175px;line-height:0%;font-family:Consolas;-inkscape-font-specification:Consolas;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         y="46.802361"
+         x="-190.58286"
+         id="tspan3438"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">power          volts accross            Amps               peak power</tspan><tspan
+         id="tspan3440"
+         y="52.590122"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">from           pwm and neutral          </tspan><tspan
+         id="tspan3442"
+         y="58.377884"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">inkscape</tspan><tspan
+         id="tspan3444"
+         y="64.165649"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px"> </tspan><tspan
+         id="tspan3446"
+         y="69.953407"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">10%              .50v                     2.5mA        </tspan><tspan
+         id="tspan3448"
+         y="75.741173"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">15%              .76v                     4  mA        </tspan><tspan
+         id="tspan3450"
+         y="81.528938"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">20%                1v                     5  mA        </tspan><tspan
+         id="tspan3452"
+         y="87.316696"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">25%             1.25v                     6.5              10mA    </tspan><tspan
+         id="tspan3454"
+         y="93.104462"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">30%             1.50                      8.5                  </tspan><tspan
+         id="tspan3456"
+         y="98.89222"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">35%             1.75                      10.5                   </tspan><tspan
+         id="tspan3458"
+         y="104.67999"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">40%             1.99                      12.5             20mA      </tspan><tspan
+         id="tspan3460"
+         y="110.46775"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">45%             2.25                 </tspan><tspan
+         id="tspan3462"
+         y="116.25551"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">50%             2.50                 </tspan><tspan
+         id="tspan3464"
+         y="122.04327"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">55%             2.75                 </tspan><tspan
+         id="tspan3466"
+         y="127.83104"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px">60%                                  </tspan><tspan
+         id="tspan3468"
+         y="133.61879"
+         x="-190.58286"
+         sodipodi:role="line"
+         style="font-size:4.63021px;line-height:1.25;stroke-width:0.264583px"> </tspan></text>
+    <path
+       style="fill:#00ff00;stroke:none;stroke-width:1.00476;stroke-linecap:round"
+       d="M 10,51.332856 48.137017,10 c 0,0 25.992823,3.195839 21.305596,14.487805 -4.68723,11.291964 -8.30918,1.278335 -8.30918,1.278335 0,0 0.63916,-14.487803 -5.96557,-7.243903 C 48.563129,25.76614 24.061694,30.240315 41.319226,41.532282 58.576763,52.824243 84.99569,6.804161 80.73457,35.353658 76.47346,63.903153 19.800574,70.081783 20.01363,68.164273 c 0.213058,-1.9175 16.405309,-11.07891 16.405309,-11.07891 z"
+       id="path1" />
+  </g>
+</svg>
